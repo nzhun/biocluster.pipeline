@@ -1,0 +1,1 @@
+awk 'BEGIN{FS="\t";OFS="\t"}{if($1 ~/^#/){print;next;}a=$4;b=$5;if(length($4)>1 && length($4)<length($5)) {a=substr($4,0,1);b=substr($5,0,length($5)-length($4)+1);}if(length($5)>1 && length($5)<=length($4)) {a=substr($4,0,length($4)-length($5)+1);b=substr($5,0,1);};$4=a;$5=b;$3=$2+length($4)-1;print; }' $1 > $1.corrected.bed

@@ -1,0 +1,1 @@
+bash run_psap.sh  /home/local/ARCS/hq2130/WES/CDH/DHREAM/vcf1112/vcf_trio/     DHREAM.ped  >CHD_DHREAM.nohup.txt

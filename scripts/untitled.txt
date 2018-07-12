@@ -1,0 +1,27 @@
+file=$1  ### vcf tabixed 
+bed=$2; ## bed format
+n=$3  ## threads to use
+interval=$4 ## length for single thread
+
+### target of this script is to split $file into n parts and processing it parrallel
+lc=$(wc $bed|awk '{print $1}')
+$i=0;
+for(( j=$interval ; j <= $lc + $interval ; j = j + interval ))
+do
+   i=$((i+1))
+   #head -n $j $bed|tail -n $interval >temp.$i.bed
+   opt=""
+   if [ $i==1 ]; then 
+       opt="-h"
+   fi
+   cmd="tabix $file -R temp.$i.bed $opt > $file.temp.$j.vcf"
+   if [ $(( i % $n )) ==0 ]; then
+   		echo $cmd
+   else 
+       echo $cmd &
+	fi
+   
+done
+
+
+wait
