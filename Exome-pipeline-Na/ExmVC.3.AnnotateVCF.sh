@@ -1,5 +1,11 @@
 #!/bin/bash
-#$ -cwd -l mem=4G,time=6:: -N AnnVCF
+#$ -S /bin/bash
+#$ -j y
+#$ -N AnnoVCF 
+#$ -l h_rt=128000:00:00
+#$ -l h_vmem=4G
+#$ -cwd
+
 
 
 #This script takes a bam file or a list of bam files (filename must end ".list") and runs variant calling using the HaplotypeCaller in gVCF mode
@@ -113,7 +119,11 @@ Content=Tmp.Content.$VcfNam
 Genotype=Tmp.Genotype.$VcfNam
 StepName="Trim the VCF to handle large VCF"
 #StepCmd="less $VcfFil|grep -v -P "^##"|cut -f 1-10 > $VCFAnn; less $VcfFil|grep -v -P '^##'|cut -f 11-  > $Genotype"
-#funcRunStep
+ #funcRunStep
+less $VcfFil|head -n 5000|egrep '^##file' -i > $Header
+less $VcfFil|head -n 5000|egrep '^##'|egrep -v '^##file|^##INFO' -i >> $Header
+less $VcfFil|head -n 5000|egrep '^##INFO' >> $Header
+
 nohup less $VcfFil|grep -v -P "^##"|cut -f 1-10 > $VCFAnn &
 nohup less $VcfFil|grep -v -P '^##'|cut -f 11-  > $Genotype &
 wait
@@ -126,6 +136,9 @@ if [[ "$FullCadd" == "true" ]]; then
     StepCmd=${StepCmd/cadd13gt10/cadd13}
     echo "  Using full CADD database..." >> $TmpLog
 fi
+
+echo $StepCmd
+
 funcRunStep
 
 AnnOut="$VCFAnn"."$BUILD""_multianno.vcf"
@@ -134,15 +147,17 @@ StepName="Paste Back the Genotypes and Chenge invalid char"
 StepCmd="
 		 sed -i -e 's/\\\x3d/:/g' $AnnOut;
 	     sed -i -e 's/\\\x3b/-/g' $AnnOut;
-		 grep '##' $AnnOut >$Header;
+		 grep '##' $AnnOut >>$Header;
 		 grep -P -v '^##' $AnnOut > $Content;
 		 paste $Content $Genotype | cat $Header - > $VCFout;
 		 bgzip -f $VCFout;
 		 tabix -f -p vcf $VCFout.gz;"
+echo $StepCmd
 funcRunStep
 #rm $Content $Genotype $Header $VCFAnn $AnnOut 
 funcWriteEndLog
 
 #Cleanup
 #End Log
-touch "Done.$InpFil"
+#touch "$InpFil"
+echo "Done"

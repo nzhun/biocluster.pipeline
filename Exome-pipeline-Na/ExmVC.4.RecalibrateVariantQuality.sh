@@ -3,7 +3,7 @@
 #$ -j y
 #$ -N VQSR 
 #$ -l h_rt=12:00:00
-#$ -l h_vmem=20G
+#$ -l h_vmem=40G
 #$ -cwd
 
 #This script takes a raw VCF file and performs GATK's variant quality score recalibration
@@ -115,6 +115,9 @@ StepCmd="java -Xmx12G -Djava.io.tmpdir=$TmpDir -jar $GATKJAR
  -tranchesFile $VcfNam.recalibrate_SNP.tranches
  -rscriptFile $VcfNam.recalibrate_SNP_plots.R
  -log $GatkLog" #command to be run
+
+echo $StepCmd
+
 funcGatkAddArguments # Adds additional parameters to the GATK command depending on flags (e.g. -B or -F)
 if [[ "$NoRecal" == "false" ]]; then
   funcRunStep
@@ -132,6 +135,9 @@ StepCmd="java -Xmx12G -Djava.io.tmpdir=$TmpDir -jar $GATKJAR
  -tranchesFile $VcfNam.recalibrate_SNP.tranches
  -o $VcfNam.recal_snps.vcf
  -log $GatkLog" #command to be run
+
+echo $StepCmd
+
 funcGatkAddArguments # Adds additional parameters to the GATK command depending on flags (e.g. -B or -F)
 if [[ "$NoRecal" == "false" ]]; then 
     funcRunStep
@@ -167,6 +173,9 @@ StepCmd="java -Xmx12G -Djava.io.tmpdir=$TmpDir -jar $GATKJAR
  -tranchesFile $VcfNam.recalibrate_INDEL.tranches
  -rscriptFile $VcfNam.recalibrate_INDEL_plots.R
  -log $GatkLog" #command to be run
+
+echo $StepCmd
+
 funcGatkAddArguments # Adds additional parameters to the GATK command depending on flags (e.g. -B or -F)
 if [[ "$NoRecal" == "false" ]]; then funcRunStep; fi
 
@@ -182,6 +191,9 @@ StepCmd="java -Xmx12G -Djava.io.tmpdir=$TmpDir -jar $GATKJAR
  -tranchesFile $VcfNam.recalibrate_INDEL.tranches
  -o $VcfNam.recalibrated.vcf
  -log $GatkLog" #command to be run
+
+echo $StepCmd
+
 funcGatkAddArguments # Adds additional parameters to the GATK command depending on flags (e.g. -B or -F)
 if [[ "$NoRecal" == "false" ]]; then 
    funcRunStep
@@ -216,6 +228,9 @@ StepCmd="java -Xmx12G -Djava.io.tmpdir=$TmpDir -jar $GATKJAR
  --filterName \"RPBias_Indel\"
  --missingValuesInExpressionsShouldEvaluateAsFailing
  -log $GatkLog" #command to be run
+
+echo $StepCmd
+
 funcGatkAddArguments # Adds additional parameters to the GATK command depending on flags e.g. -B or -F
 #funcRunStep
 #rm $VcfFil $VcfFil.idx
